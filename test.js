@@ -1,0 +1,110 @@
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const center = canvas.width / 2;
+
+const addBtn = document.getElementById("addBtn");
+const spinBtn = document.getElementById("spinBtn");
+const slotInput = document.getElementById("slotInput");
+const slotList = document.getElementById("slotList");
+
+let slots = [];
+let angle = 0;
+let spinning = false;
+
+function drawWheel() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const slice = (2 * Math.PI) / slots.length;
+
+    slots.forEach((slot, i) => {
+        const start = angle + i * slice;
+        const end = start + slice;
+
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, center, start, end);
+        ctx.fillStyle = `hsl(${i * 360 / slots.length}, 70%, 60%)`;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#000";
+        ctx.fillText(slot, center - 10, 5);
+        ctx.restore();
+    });
+
+    // Pointer
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(center - 10, 10);
+    ctx.lineTo(center + 10, 10);
+    ctx.lineTo(center, 30);
+    ctx.fill();
+}
+
+function spin() {
+    if (spinning || slots.length === 0) return;
+    spinning = true;
+
+    const spinTime = Math.random() * 2000 + 2000;
+    let start = null;
+
+    function animate(timestamp) {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+
+        angle += 0.1;
+        drawWheel();
+
+        if (elapsed < spinTime) {
+            requestAnimationFrame(animate);
+        } else {
+            spinning = false;
+            showWinner();
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+//function showWinner() {
+    //const slice = (2 * Math.PI) / slots.length;
+    //const index =
+       // Math.floor(slots.length - (angle % (2 * Math.PI)) / slice) % slots.length;
+
+    //alert("Winner: " + slots[index]);
+//}
+
+function addSlot() {
+    const value = slotInput.value.trim();
+    if (value !== "") {
+        slots.push(value);
+        slotInput.value = "";
+        updateList();
+        drawWheel();
+    }
+}
+
+function removeSlot(index) {
+    slots.splice(index, 1);
+    updateList();
+    drawWheel();
+}
+
+function updateList() {
+    slotList.innerHTML = "";
+    slots.forEach((slot, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `${slot} <button onclick="removeSlot(${i})">delete</button>`;
+        slotList.appendChild(li);
+    });
+}
+
+addBtn.addEventListener("click", addSlot);
+spinBtn.addEventListener("click", spin);
+
+updateList();
+drawWheel();

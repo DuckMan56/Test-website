@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spinning Wheel</title>
+    <link rel="stylesheet" href="./test.css">
+</head>
+<body>
+
+<h2>🎡 Spinning Wheel</h2>
+
+<canvas id="wheel" width="400" height="400"></canvas>
+
+<div class="controls">
+    <input type="text" id="slotInput" placeholder="Add a slot">
+    <button id="addBtn">Add</button>
+    <button id="spinBtn">Spin</button>
+</div>
+
+<ul id="slotList"></ul>
+
+<script src="./test.js"></script>
+</body>
+</html>
